@@ -1,0 +1,48 @@
+#
+# Program: GO - Richard Hulse GO Programme
+#
+# Ordinary compile and link make-file
+#  with combined source and assembly listings
+#
+#       qcl -c -AS  $*.c         compile small model no optimisation
+#       qcl -c -AS -Ox $*.c      compile small model maximum optimisation
+#       link /e                  exe pack
+#       tasm -c -la -ml -w2 -x $*.asm , $*.obj , $*.lst;
+LIBPATH = D:\BC\LIB;D:\BC\MYLIB
+
+
+.c.obj:
+        bcc -c -ms -Os -O1 -Ob -Oe -Z $<
+
+.asm.obj:
+        tasm -q -z -n -ml -w2 $*.asm;
+
+EXE_dependencies =  \
+         go.obj \
+         goint24.obj \
+         d:\bc\mylib\mylib.lib \
+         d:\bc\mylib\screen.lib \
+         d:\bc\mylib\window.lib
+
+
+go.exe : go $(EXE_dependencies)
+  tlink /x /c /P- /L$(LIBPATH) @&&|
+c0s.obj+
+go.obj+
+goint24.obj
+go.exe
+go.map
+mylib.lib+
+screen.lib+
+window.lib+
+cs.lib
+|
+#emu.lib+
+#maths.lib+
+
+go.obj          :       go.c  window.h  keyboard.h go
+
+goint24.obj     :       goint24.asm
+
+go230.zip : go.exe go.doc go.txt
+        zipgo 230
